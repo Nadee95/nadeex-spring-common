@@ -7,10 +7,21 @@ plugins {
 }
 
 group = "com.nadeex.spring"
-version = "0.1.0"
-java.sourceCompatibility = JavaVersion.VERSION_21
+version = "0.1.2"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+// Credential resolution: local gradle.properties (gpr.user / gpr.key) → env vars → empty string
+// Set gpr.user and gpr.key in ~/.gradle/gradle.properties for local publishing — never commit them here.
+val githubUser: String = (findProperty("gpr.user") as String?) ?: System.getenv("GITHUB_ACTOR") ?: ""
+val githubToken: String = (findProperty("gpr.key") as String?) ?: System.getenv("GITHUB_TOKEN") ?: ""
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -54,8 +65,17 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.nadeex.spring"
             artifactId = "common"
-            version = "0.1.0"
+            version = "0.1.2"
             from(components["java"])
+            // Resolve BOM-managed versions into the published POM metadata
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
             pom {
                 name.set("Nadeex Spring Common")
                 description.set("Common utilities, DTOs, and responses for Spring Boot applications")
@@ -69,7 +89,7 @@ publishing {
                 developers {
                     developer {
                         id.set("nadee95")
-                        name.set("Nadee")
+                        name.set("Nadeeka Dilhan")
                     }
                 }
                 scm {
@@ -81,12 +101,13 @@ publishing {
         }
     }
     repositories {
+        mavenLocal()
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Nadee95/nadeex-spring-common")
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = githubUser
+                password = githubToken
             }
         }
     }
