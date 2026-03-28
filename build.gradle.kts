@@ -102,6 +102,7 @@ publishing {
     }
     repositories {
         mavenLocal()
+        /*
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Nadee95/nadeex-spring-common")
@@ -110,5 +111,6 @@ publishing {
                 password = githubToken
             }
         }
+         */
     }
 }
