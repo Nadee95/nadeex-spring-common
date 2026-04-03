@@ -7,7 +7,6 @@ plugins {
 }
 
 group = "com.nadeex.spring"
-version = "0.1.2"
 
 java {
     toolchain {
@@ -65,7 +64,6 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.nadeex.spring"
             artifactId = "common"
-            version = "0.1.2"
             from(components["java"])
             // Resolve BOM-managed versions into the published POM metadata
             versionMapping {
@@ -111,6 +109,6 @@ publishing {
                 password = githubToken
             }
         }
-         */
+        */
     }
 }
